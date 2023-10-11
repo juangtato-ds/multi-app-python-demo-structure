@@ -1,0 +1,8 @@
+# Python
+*.egg-info
+build
+target
+dist
+docs/coverage
+__pycache__
+.coverage
