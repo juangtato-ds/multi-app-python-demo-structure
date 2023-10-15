@@ -1,0 +1,11 @@
+celery==5.3.4
+flower==2.0.1
+
+# Backend
+celery[redis]==5.3.4
+# Broker
+rabbitmq==0.2.0
+
+# REST
+fastapi==0.103.2
+uvicorn==0.23.2
