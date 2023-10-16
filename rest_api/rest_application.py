@@ -1,21 +1,30 @@
 from celery_app import app
 from celery_app import get_task_info
-from api_rest import TaskReceivedParameters
+from rest_api.api_rest import TaskReceivedParameters, TaskResponse, TaskInfo
 from fastapi import FastAPI
 import time
 
 api_app: FastAPI = FastAPI()
 
 @api_app.post("/call_task")
-async def call_celery_task(task_parameters: TaskReceivedParameters) -> str:
-    result = app.send_task(task_parameters.task_name, task_parameters.parameters)
+async def call_celery_task(task_parameters: TaskReceivedParameters) -> TaskResponse:
+    sended_task = app.send_task(task_parameters.task_name, task_parameters.parameters)
     time.sleep(2)
-    if result.ready():
-        return result.get(timeout=5)
+    if sended_task.ready():
+        result = sended_task.get(timeout=5)
+        return TaskResponse(
+            task_id=result["task_id"],
+            task_response=result["result"]
+        )
 
-@api_app.get("task/{task_id}")
-async def get_task_status(task_id: str) -> dict:
-    return get_task_info(task_id)
+@api_app.get("/task/{task_id}")
+async def get_task_status(task_id: str) -> TaskInfo:
+    task_info = get_task_info(task_id)
+    return TaskInfo(
+        task_id = task_info["task_result"]["task_id"],
+        task_status = task_info["task_status"],
+        task_result = task_info["task_result"]["result"]
+    )
 
 @api_app.get("/health-check")
 async def health_check():
