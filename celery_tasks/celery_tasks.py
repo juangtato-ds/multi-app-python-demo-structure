@@ -1,27 +1,32 @@
-from celery import Celery
+from celery_app import app
 import time
 import math
 import os
-
-module_name = 'tasks'
-app = Celery(module_name)
-app.config_from_object('celeryconfig')
 
 def active_wait():
     time.sleep(int(os.environ.get["TASK_ARTIFICIAL_DELAY"]))
     return
 
-@app.task
-def concatenate(a: str, b: str, c: str = ""):
+@app.task(bind=True, name='concatenate')
+def concatenate(self, a: str, b: str, c: str = "") -> str:
     active_wait
-    return f"Concatenated string result as: {a} {b} {c}"
+    return {
+        "task_id": self.request.id, 
+        "result": f"Concatenated string result as: {a} {b} {c}"
+        }
 
-@app.task
-def exponent(x: int):
+@app.task(bind=True, name='exponential')
+def exponent(self, x: int) -> str:
     active_wait
-    return f"Exponential: {float(math.exp(x))}"
+    return {
+        "task_id": self.request.id, 
+        "result": f"Exponential: {float(math.exp(x))}"
+    }
 
-@app.task
-def square_root(x: int):
+@app.task(bind=True, name='sqrt')
+def square_root(self, x: int) -> str:
     active_wait
-    return f"Square root: {float(math.sqrt(x))}"
+    return {
+        "task_id": self.request.id, 
+        "result": f"Square root: {float(math.sqrt(x))}"
+    }
