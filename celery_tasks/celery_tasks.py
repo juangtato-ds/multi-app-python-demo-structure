@@ -4,7 +4,7 @@ import math
 import os
 
 def active_wait():
-    time.sleep(int(os.environ.get["TASK_ARTIFICIAL_DELAY"]))
+    time.sleep(int(os.environ.get("TASK_ARTIFICIAL_DELAY")))
     return
 
 @app.task(bind=True, name='concatenate')
