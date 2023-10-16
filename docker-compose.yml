@@ -38,14 +38,17 @@ services:
     depends_on:
       - celery_worker
 
-  # celery_flower:
-  #   container_name: celery_flower
-  #   env_file:
-  #     - .env
-  #   command: celery -A celery_app.app flower
-  #   port:
-  #     - 5556:5555
-  #   depends_on:
-  #     - rest_api
-  #     - redis
-  #     - rabbitmq
+  celery_flower:
+    container_name: celery_flower
+    env_file:
+      - .env
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    command: celery -A celery_app.app flower
+    ports:
+      - 5556:5555
+    depends_on:
+      - rest_api
+      - redis
+      - rabbitmq
