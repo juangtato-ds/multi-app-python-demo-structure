@@ -21,7 +21,7 @@ services:
     depends_on:
       - redis
       - rabbitmq
-    command: celery -A celery_app worker --concurrency=1 --loglevel=INFO
+    command: celery -A celery_app worker -B --concurrency=1 --loglevel=INFO
 
   rest_api:
     container_name: rest_api
