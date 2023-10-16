@@ -17,9 +17,6 @@ broker_url = f'{broker_transport}://{broker_host}:{broker_port}'
 # result_backend = 'redis://username:password@host:port/db'
 result_backend = f'{backend_transport}://{backend_host}:{backend_port}'
 
-# timezone = 'Europe/Madrid'
+timezone = 'Europe/Madrid'
 
-# imports = ('celery_tasks.celery_tasks')
-
-# broker_url = 'amqp://rabbitmq:5672'
-# result_backend = 'redis://redis/1'
+imports = ('celery_tasks.celery_tasks')
