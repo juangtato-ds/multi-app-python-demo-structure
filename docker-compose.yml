@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:latest
+    hostname: rabbitmq
+
+  redis:
+    container_name: redis
+    image: redis:6.2-alpine
+    hostname: redis
+
+  celery_worker:
+    container_name: celery_worker
+    restart: on-failure
+    env_file: .env
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - redis
+      - rabbitmq
+    command: celery -A celery_app worker --concurrency=1 --loglevel=INFO
+
+  rest_api:
+    container_name: rest_api
+    restart: always
+    env_file: .env
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/app
+    ports:
+      - 8000:8000
+    command: bash -c "uvicorn rest_api.rest_application:api_app --host 0.0.0.0 --port 8000 --reload"
+    depends_on:
+      - celery_worker
+
+  # celery_flower:
+  #   container_name: celery_flower
+  #   env_file:
+  #     - .env
+  #   command: celery -A celery_app.app flower
+  #   port:
+  #     - 5556:5555
+  #   depends_on:
+  #     - rest_api
+  #     - redis
+  #     - rabbitmq
