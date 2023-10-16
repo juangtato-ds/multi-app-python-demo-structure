@@ -1,7 +1,7 @@
 from celery_app import app
 from celery_app import get_task_info
 from rest_api.api_rest import TaskReceivedParameters, TaskResponse, TaskInfo
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 import time
 
 api_app: FastAPI = FastAPI()
@@ -16,15 +16,19 @@ async def call_celery_task(task_parameters: TaskReceivedParameters) -> TaskRespo
             task_id=result["task_id"],
             task_response=result["result"]
         )
+    raise HTTPException(status_code=404, detail="Task not found")
 
 @api_app.get("/task/{task_id}")
 async def get_task_status(task_id: str) -> TaskInfo:
     task_info = get_task_info(task_id)
-    return TaskInfo(
-        task_id = task_info["task_result"]["task_id"],
-        task_status = task_info["task_status"],
-        task_result = task_info["task_result"]["result"]
-    )
+    if task_info:
+        return TaskInfo(
+            task_id = task_info["task_result"]["task_id"],
+            task_status = task_info["task_status"],
+            task_result = task_info["task_result"]["result"]
+        )
+    else:
+        raise HTTPException(status_code=404, detail="Task not found")
 
 @api_app.get("/health-check")
 async def health_check():
