@@ -19,4 +19,5 @@ result_backend = f'{backend_transport}://{backend_host}:{backend_port}'
 
 timezone = 'UTC'
 
-imports = ('celery_tasks.celery_tasks', 'celery_cron_jobs.cron_tasks')
+#imports = ('celery_tasks.celery_tasks', 'celery_cron_jobs.cron_tasks')
+#imports = ('celery_cron_jobs.cron_tasks')

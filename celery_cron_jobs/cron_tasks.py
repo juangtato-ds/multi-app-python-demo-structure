@@ -1,9 +1,11 @@
+from random import random
 from celery_app import app
 import os
 
 @app.task(name='cron_task')
 def cron_task():
     print(f'RUN TASK EVERY {float(os.environ.get("CRON_TASK_DELAY", "120"))} SECONDS')
+    return random()
 
 app.conf.beat_schedule = {
     'run-cron-task': {

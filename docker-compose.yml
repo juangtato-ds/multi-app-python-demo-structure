@@ -15,19 +15,32 @@ services:
     container_name: celery_worker
     restart: on-failure
     env_file: .env
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
     depends_on:
       - redis
       - rabbitmq
-    command: celery -A celery_app worker -B --concurrency=1 --loglevel=INFO
+    command: celery -A celery_tasks.celery_tasks worker --concurrency=1 --loglevel=INFO
+
+  celery_cron:
+    container_name: celery_cron
+    restart: on-failure
+    env_file: .env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - redis
+      - rabbitmq
+      - celery_worker
+    command: celery -A celery_cron_jobs.cron_tasks worker -B --concurrency=1 --loglevel=INFO
 
   rest_api:
     container_name: rest_api
     restart: always
     env_file: .env
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
     volumes:
@@ -42,7 +55,7 @@ services:
     container_name: celery_flower
     env_file:
       - .env
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile
     command: celery -A celery_app.app flower
