@@ -18,3 +18,5 @@ broker_url = f'{broker_transport}://{broker_host}:{broker_port}'
 result_backend = f'{backend_transport}://{backend_host}:{backend_port}'
 
 timezone = 'UTC'
+
+redbeat_redis_url = f'{backend_transport}://{backend_host}:{backend_port}'
