@@ -1,7 +1,8 @@
-from celery_app import app
-from celery_app import get_task_info
 from rest_api.api_rest import TaskReceivedParameters, TaskResponse, TaskInfo
 from fastapi import FastAPI, HTTPException
+from celery_tasks.celery_tasks import app
+from celery.result import AsyncResult
+from typing import Optional
 import time
 
 api_app: FastAPI = FastAPI()
@@ -13,16 +14,18 @@ async def call_celery_task(task_parameters: TaskReceivedParameters) -> TaskRespo
     time.sleep(2)
     if sended_task.ready():
         result = sended_task.get(timeout=5)
-        return TaskResponse(task_id=result["task_id"], task_response=result["result"])
+        return TaskResponse(
+            task_id = result["task_id"], 
+            task_response = result["result"])
     return TaskResponse(
-        task_id=sended_task.id, task_response="IN PROGRESS - come back soon"
+        task_id = sended_task.id, 
+        task_response = "IN PROGRESS - Come back soon"
     )
 
 
 @api_app.get("/task/{task_id}")
 async def get_task_status(task_id: str) -> TaskInfo:
-    task_info = get_task_info(task_id)
-    if task_info:
+    if task_info := get_task_info(task_id):
         return TaskInfo(
             task_id=task_info["task_result"]["task_id"],
             task_status=task_info["task_status"],
@@ -35,3 +38,13 @@ async def get_task_status(task_id: str) -> TaskInfo:
 @api_app.get("/health-check")
 async def health_check():
     return {"healthcheck": True}
+
+def get_task_info(task_id) -> Optional[dict]:
+    result = None
+    task_result = AsyncResult(task_id)
+    if task_result.ready():
+        result = {
+            "task_status": task_result.status,
+            "task_result": task_result.result
+        }
+    return result

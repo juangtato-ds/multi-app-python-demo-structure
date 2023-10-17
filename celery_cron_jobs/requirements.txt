@@ -1,5 +1,4 @@
 celery==5.3.4
-flower==2.0.1
 
 # Backend
 celery[redis]==5.3.4

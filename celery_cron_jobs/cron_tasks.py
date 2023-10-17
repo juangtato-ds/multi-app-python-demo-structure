@@ -1,6 +1,10 @@
 from random import random
-from celery_app import app
+from celery import Celery
 import os
+
+module_name = 'tasks'
+app = Celery(module_name)
+app.config_from_object('celeryconfig')
 
 @app.task(name='cron_task')
 def cron_task():

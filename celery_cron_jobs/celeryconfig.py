@@ -18,6 +18,3 @@ broker_url = f'{broker_transport}://{broker_host}:{broker_port}'
 result_backend = f'{backend_transport}://{backend_host}:{backend_port}'
 
 timezone = 'UTC'
-
-#imports = ('celery_tasks.celery_tasks', 'celery_cron_jobs.cron_tasks')
-#imports = ('celery_cron_jobs.cron_tasks')

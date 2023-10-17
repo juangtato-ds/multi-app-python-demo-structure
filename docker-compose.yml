@@ -3,7 +3,7 @@ version: '3.8'
 services:
   rabbitmq:
     container_name: rabbitmq
-    image: rabbitmq:latest
+    image: rabbitmq:3
     hostname: rabbitmq
 
   redis:
@@ -16,25 +16,25 @@ services:
     restart: on-failure
     env_file: .env
     build:
-      context: .
+      context: ./celery_tasks
       dockerfile: Dockerfile
     depends_on:
       - redis
       - rabbitmq
-    command: celery -A celery_tasks.celery_tasks worker --concurrency=1 --loglevel=INFO
+    command: celery -A celery_tasks worker --concurrency=1 --loglevel=INFO
 
   celery_cron:
     container_name: celery_cron
     restart: on-failure
     env_file: .env
     build:
-      context: .
+      context: ./celery_cron_jobs
       dockerfile: Dockerfile
     depends_on:
       - redis
       - rabbitmq
       - celery_worker
-    command: celery -A celery_cron_jobs.cron_tasks worker -B --concurrency=1 --loglevel=INFO
+    command: celery -A cron_tasks worker -B --concurrency=1 --loglevel=INFO
 
   rest_api:
     container_name: rest_api
@@ -42,9 +42,7 @@ services:
     env_file: .env
     build:
       context: .
-      dockerfile: Dockerfile
-    volumes:
-      - .:/app
+      dockerfile: rest_api/Dockerfile
     ports:
       - 8000:8000
     command: bash -c "uvicorn rest_api.rest_application:api_app --host 0.0.0.0 --port 8000 --reload"
@@ -58,7 +56,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: celery -A celery_app.app flower
+    command: celery --config=flowerconfig flower
     ports:
       - 5556:5555
     depends_on:

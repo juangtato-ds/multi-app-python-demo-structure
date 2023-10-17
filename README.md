@@ -58,7 +58,8 @@ docker compose up
 This file contains services for:
   * The broker (rabbitmq).
   * The backend (redis).
-  * The celery worker, which has beat implemented (command for periodic task).
+  * The celery worker for tasks.
+  * The celery worker for cron tasks.
   * The REST API, exposed in port 8000.
   * The flower server, exposed in port 5556.
 
