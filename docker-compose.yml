@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    container_name: poc-rabbitmq
+    image: rabbitmq:3
+    env_file: .env
+
+  redis:
+    container_name: poc-redis
+    image: redis:6.2-alpine
+
+  celery_worker:
+    container_name: poc-celery_worker
+    restart: on-failure
+    env_file: .env
+    build:
+      context: ./celery_tasks
+    depends_on:
+      - redis
+      - rabbitmq
+    command: celery -A celery_tasks worker --concurrency=1 --loglevel=INFO
+
+  celery_cron:
+    container_name: poc-celery_cron
+    restart: on-failure
+    env_file: .env
+    build:
+      context: ./celery_cron_jobs
+    depends_on:
+      - redis
+      - rabbitmq
+      - celery_worker
+    command: celery -A cron_tasks beat
+
+  rest_api:
+    container_name: poc-rest_api
+    restart: on-failure
+    env_file: .env
+    build:
+      context: ./rest_api
+    ports:
+      - 8000:8000
+    command: bash -c "uvicorn rest_application:app --host 0.0.0.0 --port 8000 --reload"
+    depends_on:
+      - celery_worker
+
+  celery_flower:
+    container_name: poc-celery_flower
+    env_file:
+      - .env
+    build:
+      context: ./flower
+    command: celery --config=flowerconfig flower
+    ports:
+      - 5556:5555
+    depends_on:
+      - redis
+      - rabbitmq
