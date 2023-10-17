@@ -53,6 +53,8 @@ To use the tasks defined fro this celery app, a REST API was implemented. This A
 All this projects can be deployed by the command
 ```bash
 docker compose up
+# or
+docker compose up --build
 ```
 
 This file contains services for:
@@ -65,7 +67,6 @@ This file contains services for:
 
 > All the necessary environment variables will be allocated in the `.env` file.
 
-> To modify the config from the celery app update `celeryconfig.py`.
 
 ## Appendix - Example of Celery
 
