@@ -1,3 +1,4 @@
+from random import random
 from celery import Celery
 import time
 import math
@@ -34,3 +35,8 @@ def square_root(self, x: int) -> dict:
         "task_id": self.request.id,
         "result": f"Square root: {float(math.sqrt(x))}"
     }
+
+@app.task(bind=True, name='cron_task')
+def cron_task(self):
+    print(f'RUN TASK EVERY {float(os.environ.get("CRON_TASK_DELAY", "120"))} SECONDS')
+    return random()
