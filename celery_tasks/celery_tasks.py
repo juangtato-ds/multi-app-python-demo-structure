@@ -37,6 +37,7 @@ def square_root(self, x: int) -> dict:
     }
 
 @app.task(bind=True, name='cron_task')
-def cron_task(self):
-    print(f'RUN TASK EVERY {float(os.environ.get("CRON_TASK_DELAY", "120"))} SECONDS')
+def cron_task(self) -> float:
+    active_wait()
+    print('Executing cront_task')
     return random()

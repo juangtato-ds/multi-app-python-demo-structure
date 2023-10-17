@@ -5,12 +5,10 @@ services:
     container_name: poc-rabbitmq
     image: rabbitmq:3
     env_file: .env
-    #hostname: rabbitmq
 
   redis:
     container_name: poc-redis
     image: redis:6.2-alpine
-    #hostname: redis
 
   celery_worker:
     container_name: poc-celery_worker
@@ -37,7 +35,7 @@ services:
 
   rest_api:
     container_name: poc-rest_api
-    restart: always
+    restart: on-failure
     env_file: .env
     build:
       context: ./rest_api
