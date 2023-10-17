@@ -5,7 +5,7 @@ import os
 
 module_name = 'tasks'
 app = Celery(module_name)
-app.config_from_object('celeryconfig')
+app.config_from_object(str(os.environ.get("CELERY_CONF_PATH", "celeryconfig")))
 
 def active_wait():
     time.sleep(int(os.environ.get("TASK_ARTIFICIAL_DELAY", '5')))
