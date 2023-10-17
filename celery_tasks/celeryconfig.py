@@ -1,20 +1,14 @@
 import os
 
-broker_transport = os.environ.get("CELERY_BROKER_TRANSPORT")
-backend_transport = os.environ.get("CELERY_BACKEND_TRANSPORT")
-broker_host = os.environ.get("CELERY_HOST_BROKER")
-backend_host = os.environ.get("CELERY_HOST_BACKEND")
-broker_port = os.environ.get("CELERY_BROKER_PORT")
-backend_port = os.environ.get("CELERY_BACKEND_PORT")
-# virtual_host = os.environ.get("CELERY_VIRTUAL_HOST"))
-db = os.environ.get("CELERY_DB")
 
-# Broker settings
-# broker_url = 'transport://userid:password@hostname:port/virtual_host'
-broker_url = f'{broker_transport}://{broker_host}:{broker_port}'
+broker_url = os.environ.get("CELERY_BROKER_URL")
+result_backend = os.environ.get("CELERY_BACKEND_URL")
 
-# Backend settings
-# result_backend = 'redis://username:password@host:port/db'
-result_backend = f'{backend_transport}://{backend_host}:{backend_port}'
+task_serializer = "json"
+result_serializer = "json"
+accept_content = ["json"]
+# timezone = 'Europe/Oslo'
+timezone = "UTC"
+enable_utc = True
 
-timezone = 'UTC'
+result_extended = True

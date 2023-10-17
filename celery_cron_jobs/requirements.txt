@@ -3,4 +3,4 @@ celery==5.3.4
 # Backend
 celery[redis]==5.3.4
 # Broker
-rabbitmq==0.2.0
+# rabbitmq==0.2.0

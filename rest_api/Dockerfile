@@ -4,4 +4,4 @@ ENV CELERY_CONF_PATH=celery_tasks.celeryconfig
 
 WORKDIR /app
 COPY . .
-RUN pip install -r rest_api/requirements.txt
+RUN pip install -r requirements.txt
